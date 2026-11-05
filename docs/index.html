@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 1 – Hello Cloud API | Đinh Tấn Minh – 2324802010289</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    h1 {
+      color: #1a73e8;
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 1.8rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+    h2 {
+      color: #1a73e8;
+      margin: 30px 0 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #1a73e8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background: #1a73e8;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:hover { background: #f0f4ff; }
+    .nist-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 4px solid #1a73e8;
+    }
+    .nist-card strong { color: #1a73e8; }
+    .question-section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .question-section h3 { color: #d93025; margin-bottom: 10px; }
+    .question-section p { margin-bottom: 12px; }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: #666;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bài 1 – Hello Cloud API</h1>
+  <p class="subtitle">Đinh Tấn Minh – MSSV: 2324802010289 | Điện Toán Đám Mây</p>
+
+  <h2>Bảng so sánh Máy cá nhân vs. Codespace</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tiêu chí</th>
+        <th>Máy cá nhân</th>
+        <th>Codespace</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Thời gian từ lúc bắt đầu đến khi chạy được <code>node -v</code></td>
+        <td>~15–30 phút (tải & cài Node.js)</td>
+        <td>~1–2 phút (đã cài sẵn)</td>
+      </tr>
+      <tr>
+        <td>Số CPU, RAM (từ API)</td>
+        <td>8 CPU, 16 GB RAM</td>
+        <td>2 CPU, 8 GB RAM</td>
+      </tr>
+      <tr>
+        <td>Hệ điều hành</td>
+        <td>Windows 11</td>
+        <td>Linux 6.x (Ubuntu)</td>
+      </tr>
+      <tr>
+        <td>Cách truy cập từ thiết bị khác</td>
+        <td>Cấu hình mạng, mở port, dùng IP LAN/ngrok</td>
+        <td>Đổi Port Visibility → Public, truy cập qua URL .app.github.dev</td>
+      </tr>
+      <tr>
+        <td>Chi phí, đo bằng gì</td>
+        <td>Tiền điện, khấu hao phần cứng (khó đo)</td>
+        <td>Miễn phí 60 core-giờ/tháng; đo qua Settings → Billing → Usage</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5 đặc tính NIST qua trải nghiệm thực tế</h2>
+
+  <div class="nist-card">
+    <strong>1. Tự phục vụ theo yêu cầu (On-demand self-service)</strong>
+    <p>Sinh viên tự tạo Codespace chỉ bằng vài cú nhấp chuột trên GitHub, không cần liên hệ quản trị viên hay chờ phê duyệt. Máy ảo được cấp phát tự động trong vòng 1–2 phút.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>2. Truy cập mạng rộng (Broad network access)</strong>
+    <p>API chạy trên Codespace có thể truy cập từ điện thoại, máy tính bảng hay bất kỳ thiết bị nào có trình duyệt thông qua URL công khai <code>*.app.github.dev</code>.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>3. Gộp tài nguyên (Resource pooling)</strong>
+    <p>Mỗi lần tạo Codespace, máy ảo được cấp từ một kho tài nguyên chung của GitHub/Azure. Hostname thay đổi khi Stop rồi Start lại, cho thấy máy ảo được phân phối lại từ pool.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>4. Co giãn nhanh (Rapid elasticity)</strong>
+    <p>Có thể chọn cấu hình máy (2-core, 4-core, 8-core…) khi tạo Codespace. Tài nguyên được cấp/thu hồi linh hoạt theo nhu cầu mà không ảnh hưởng người dùng khác.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>5. Dịch vụ đo lường được (Measured service)</strong>
+    <p>GitHub đo mức sử dụng bằng core-giờ (core-hours). Sinh viên theo dõi được lượng tài nguyên đã dùng qua Settings → Billing → Usage, minh bạch và rõ ràng.</p>
+  </div>
+
+  <h2>Câu hỏi phản biện</h2>
+
+  <div class="question-section">
+    <h3>Câu 1: Trường <code>host</code> có đổi không khi Stop rồi Start lại?</h3>
+    <p>Có, trường <code>host</code> (hostname) thường thay đổi sau khi Stop và Start lại Codespace. Điều này cho thấy máy ảo không phải lúc nào cũng chạy trên cùng một máy chủ vật lý — nó được cấp phát lại từ một <strong>kho tài nguyên chung</strong> (resource pool), đúng với đặc tính thứ 3 của NIST.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 2: Codespaces là IaaS, PaaS hay SaaS?</h3>
+    <p><strong>Codespaces là PaaS</strong> (Platform as a Service). Lý do:</p>
+    <ul style="margin-left: 20px; margin-top: 8px;">
+      <li><strong>Hệ điều hành</strong>: GitHub quản lý (Ubuntu Linux, người dùng không cài/cấu hình OS).</li>
+      <li><strong>Runtime</strong>: GitHub cài sẵn Node.js, Python, Java… trong container dev.</li>
+      <li><strong>Mã nguồn</strong>: Sinh viên tự viết và quản lý.</li>
+    </ul>
+    <p style="margin-top: 8px;">→ Người dùng chỉ quản lý ứng dụng và dữ liệu, phần còn lại do nhà cung cấp lo ⇒ PaaS.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 3: Hai hạn chế của cách làm truyền thống và một rủi ro mới</h3>
+    <p><strong>Hạn chế 1:</strong> Cài đặt môi trường trên từng máy phòng lab tốn nhiều thời gian và dễ gặp lỗi không đồng nhất (khác phiên bản Node.js, thiếu thư viện…).</p>
+    <p><strong>Hạn chế 2:</strong> Sinh viên bị gắn với máy cụ thể trong phòng lab, không thể làm việc từ xa hay trên thiết bị cá nhân.</p>
+    <p><strong>Rủi ro mới:</strong> Phụ thuộc hoàn toàn vào kết nối Internet và nhà cung cấp dịch vụ đám mây. Nếu GitHub gặp sự cố hoặc mất mạng, sinh viên không thể tiếp tục làm việc.</p>
+  </div>
+
+  <footer>
+    <p>Đinh Tấn Minh – 2324802010289 | Điện Toán Đám Mây – TDMU</p>
+    <p>Repo: <a href="https://github.com/DinhTanMinh2324802010289/notes-api-2324802010289">notes-api-2324802010289</a></p>
+  </footer>
+
+</body>
+</html>
