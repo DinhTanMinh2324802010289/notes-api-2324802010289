@@ -210,10 +210,7 @@ Status: Downloaded newer image for ghcr.io/dinhtanminh2324802010289/notes-api:1.
 
 $ curl localhost:3000   (mở qua cổng 3000 của Codespace)
 {"message":"Xin chào từ đám mây!","host":"a88903752738","platform":"Linux 6.8.0-1070-azure","cpus":2,"memoryGB":7.8,"uptimeSec":2210,"time":"2026-11-12T07:51:20.067Z"}</div>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-04-push-ghcr.png" alt="Hình 1. docker tag và docker push lên GHCR (digest sha256:364defa4…)"><figcaption style="font-size:.85rem;color:#666">Hình 1. docker tag và docker push lên GHCR (digest sha256:364defa4…)</figcaption></figure>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-05-pull-run.png" alt="Hình 2. Xóa container và image cục bộ, kéo lại từ GHCR và chạy (digest trùng lúc push)"><figcaption style="font-size:.85rem;color:#666">Hình 2. Xóa container và image cục bộ, kéo lại từ GHCR và chạy (digest trùng lúc push)</figcaption></figure>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-06-browser.png" alt="Hình 3. API từ image kéo về, mở qua cổng 3000 của Codespace (host a88903752738)"><figcaption style="font-size:.85rem;color:#666">Hình 3. API từ image kéo về, mở qua cổng 3000 của Codespace (host a88903752738)</figcaption></figure>
-  </div>
+      </div>
 
   <h2>2. Dockerfile</h2>
   <div class="card">
@@ -243,8 +240,6 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
     <div class="term">CONTAINER ID   NAME     CPU %   MEM USAGE / LIMIT     MEM %    NET I/O        BLOCK I/O     PIDS
 9a0d3a3afa04   notes2   0.01%   12.88MiB / 128MiB     10.06%   1.26kB / 891B  0B / 0B       7
 29961c79f6ac   notes1   0.00%   59.61MiB / 7.756GiB   0.75%    1.61kB / 891B  61.3MB / 0B   7</div>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-01-docker-images.png" alt="Hình 4. docker images notes-api (DISK USAGE 251MB, CONTENT SIZE 63.3MB)"><figcaption style="font-size:.85rem;color:#666">Hình 4. docker images notes-api (DISK USAGE 251MB, CONTENT SIZE 63.3MB)</figcaption></figure>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-02-curl-stats.png" alt="Hình 5. curl hai bản sao và docker stats --no-stream (notes2: LIMIT 128MiB)"><figcaption style="font-size:.85rem;color:#666">Hình 5. curl hai bản sao và docker stats --no-stream (notes2: LIMIT 128MiB)</figcaption></figure>
     <p><strong>Nhận xét:</strong> trường <code>host</code> của hai bản sao khác nhau (là ID container), còn <code>cpus</code> và <code>memoryGB</code> giống nhau và bằng của máy Codespace. <code>os.cpus()</code> và <code>os.totalmem()</code> đọc thông tin từ nhân hệ điều hành dùng chung, trong khi <code>--cpus</code>/<code>--memory</code> do cgroups áp đặt và chỉ hiện ở cột MEM USAGE / LIMIT của <code>docker stats</code>.</p>
   </div>
 
@@ -259,9 +254,6 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
     </tbody>
   </table>
 
-<div class="card">
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-03-time-kernel.png" alt="Hình 6. time docker run --rm (real 0m0.409s), docker images và hai lệnh uname -r cho cùng kết quả 6.8.0-1070-azure"><figcaption style="font-size:.85rem;color:#666">Hình 6. time docker run --rm (real 0m0.409s), docker images và hai lệnh uname -r cho cùng kết quả 6.8.0-1070-azure</figcaption></figure>
-  </div>
 
   <h2>5. Bảng 2 – Mô phỏng CloudSim Plus (BasicFirstExample)</h2>
   <p>Cấu hình gốc: HOSTS=1, HOST_PES=8, VMS=2, VM_PES=4, CLOUDLETS=4, CLOUDLET_PES=2, CLOUDLET_LENGTH=10000. Mỗi lần chỉ đổi một yếu tố. Ở lần 0, cloudlet dài 10 000 MI chạy trên lõi 1000 MIPS với mức sử dụng 50% (<code>UtilizationModelDynamic(0.5)</code>) nên cần 10 000 / 500 = 20 giây, đúng với 20,1 s (0,1 s đầu là thời điểm bắt đầu).</p>
@@ -284,13 +276,6 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
     </ul>
   </div>
 
-  <div class="card">
-    <strong>Ảnh chụp kết quả các lần chạy</strong>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-07-cloudsim-lan0.png" alt="Hình 7. Lần 0 – giữ nguyên (VMS = 2, CLOUDLETS = 4): kết thúc 20,1 s"><figcaption style="font-size:.85rem;color:#666">Hình 7. Lần 0 – giữ nguyên (VMS = 2, CLOUDLETS = 4): kết thúc 20,1 s</figcaption></figure>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-08-cloudsim-lan1.png" alt="Hình 8. Lần 1 – VMS = 4: cloudlet bắt đầu 25,6 s, kết thúc 45,6 s"><figcaption style="font-size:.85rem;color:#666">Hình 8. Lần 1 – VMS = 4: cloudlet bắt đầu 25,6 s, kết thúc 45,6 s</figcaption></figure>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-09-cloudsim-lan2.png" alt="Hình 9. Lần 2 – CLOUDLETS = 8: kết thúc 40,1 s"><figcaption style="font-size:.85rem;color:#666">Hình 9. Lần 2 – CLOUDLETS = 8: kết thúc 40,1 s</figcaption></figure>
-    <figure style="margin:10px 0"><img class="shot" src="img/b2-10-cloudsim-lan3.png" alt="Hình 10. Lần 3 – CloudletSchedulerSpaceShared: kết thúc 20,1 s"><figcaption style="font-size:.85rem;color:#666">Hình 10. Lần 3 – CloudletSchedulerSpaceShared: kết thúc 20,1 s</figcaption></figure>
-  </div>
 
   <h2>6. Câu hỏi phản biện</h2>
 
