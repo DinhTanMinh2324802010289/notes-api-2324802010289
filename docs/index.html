@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài 1 – Hello Cloud API | Đinh Tấn Minh – 2324802010289</title>
+  <title>Bài 1 & Bài 2 – Điện Toán Đám Mây | Đinh Tấn Minh – 2324802010289</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -78,12 +78,28 @@
       color: #666;
       font-size: 0.85rem;
     }
+  
+    nav.toc { text-align:center; margin-bottom: 24px; }
+    nav.toc a { margin: 0 10px; color:#1a73e8; font-weight:600; text-decoration:none; }
+    nav.toc a:hover { text-decoration: underline; }
+    h3 { color:#1565c0; margin: 22px 0 10px; }
+    .term { background:#263238; color:#e0f2f1; border-radius:8px; padding:14px 16px; margin:10px 0;
+            font-family: Consolas,'Courier New',monospace; font-size:.85rem; white-space:pre-wrap; overflow-x:auto; }
+    .card { background:#fff; border-radius:8px; padding:16px 20px; margin:12px 0;
+            box-shadow:0 2px 8px rgba(0,0,0,.1); border-left:4px solid #1a73e8; overflow-x:auto; }
+    .shot { max-width:100%; border:1px solid #ddd; border-radius:6px; margin:8px 0; }
+    mark { background:#fff3b0; padding:0 4px; border-radius:3px; }
+    code { background:#eceff1; padding:1px 5px; border-radius:3px; font-size:.9em; }
+    .term code { background:none; padding:0; }
+    ul { margin-left: 22px; }
   </style>
 </head>
 <body>
 
   <h1>Bài 1 – Hello Cloud API</h1>
   <p class="subtitle">Đinh Tấn Minh – MSSV: 2324802010289 | Điện Toán Đám Mây</p>
+  <nav class="toc"><a href="#bai1">Bài 1 – Hello Cloud API</a><a href="#bai2">Bài 2 – Container &amp; CloudSim Plus</a></nav>
+  <div id="bai1"></div>
 
   <h2>Bảng so sánh Máy cá nhân vs. Codespace</h2>
   <table>
@@ -173,6 +189,109 @@
     <p><strong>Hạn chế 1:</strong> Cài đặt môi trường trên từng máy phòng lab tốn nhiều thời gian và dễ gặp lỗi không đồng nhất (khác phiên bản Node.js, thiếu thư viện…).</p>
     <p><strong>Hạn chế 2:</strong> Sinh viên bị gắn với máy cụ thể trong phòng lab, không thể làm việc từ xa hay trên thiết bị cá nhân.</p>
     <p><strong>Rủi ro mới:</strong> Phụ thuộc hoàn toàn vào kết nối Internet và nhà cung cấp dịch vụ đám mây. Nếu GitHub gặp sự cố hoặc mất mạng, sinh viên không thể tiếp tục làm việc.</p>
+  </div>
+
+
+  <hr style="margin:48px 0 8px; border:none; border-top:3px solid #1a73e8;">
+  <h1 id="bai2" style="margin-top:24px;">Bài 2 – Ảo hóa, Container &amp; Mô phỏng Trung tâm Dữ liệu</h1>
+  <p class="subtitle">Chương 2: mục 2.2 Công nghệ ảo hóa, 2.5 Công cụ mô phỏng đám mây</p>
+
+  <h2>1. Link package trên GHCR</h2>
+  <div class="card">
+    <p><strong>Package:</strong> <a href="https://github.com/users/DinhTanMinh2324802010289/packages/container/package/notes-api">ghcr.io/dinhtanminh2324802010289/notes-api</a> (công khai)</p>
+    <div class="term">docker run -d -p 3000:3000 ghcr.io/dinhtanminh2324802010289/notes-api:1.0</div>
+    <p>Kết quả kéo về từ GHCR sau khi đã xóa image cục bộ và chạy lại:</p>
+    <div class="term"><mark>[ĐIỀN: dán output docker run / pull và curl localhost:3000]</mark></div>
+  </div>
+
+  <h2>2. Dockerfile</h2>
+  <div class="card">
+    <div class="term">FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY src ./src
+ENV PORT=3000
+EXPOSE 3000
+USER node
+CMD ["node", "src/server.js"]</div>
+    <p><code>.dockerignore</code>: <code>node_modules</code>, <code>.env</code>, <code>.git</code>, <code>docs</code>.</p>
+    <p>Image dựa trên Alpine nhỏ nhẹ, chỉ cài dependency production (<code>npm ci --omit=dev</code>), và chạy bằng user <code>node</code> thay vì root.</p>
+  </div>
+
+  <h2>3. Chạy hai bản sao có giới hạn tài nguyên</h2>
+  <div class="card">
+    <div class="term">docker build -t notes-api:1.0 .
+docker run -d --name notes1 -p 3000:3000 notes-api:1.0
+docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0</div>
+    <strong>curl localhost:3000 (notes1, không giới hạn)</strong>
+    <div class="term"><mark>[ĐIỀN: dán JSON]</mark></div>
+    <strong>curl localhost:3001 (notes2, 0.5 CPU, 128 MB)</strong>
+    <div class="term"><mark>[ĐIỀN: dán JSON]</mark></div>
+    <strong>docker stats --no-stream</strong>
+    <div class="term"><mark>[ĐIỀN: dán bảng docker stats; cột MEM USAGE / LIMIT của notes2 phải là 128MiB]</mark></div>
+    <p><strong>Nhận xét:</strong> trường <code>host</code> của hai bản sao khác nhau (là ID container), còn <code>cpus</code> và <code>memoryGB</code> giống nhau và bằng của máy Codespace. <code>os.cpus()</code> và <code>os.totalmem()</code> đọc thông tin từ nhân hệ điều hành dùng chung, trong khi <code>--cpus</code>/<code>--memory</code> do cgroups áp đặt và chỉ hiện ở cột MEM USAGE / LIMIT của <code>docker stats</code>.</p>
+  </div>
+
+  <h2>4. Bảng 1 – Máy ảo và container</h2>
+  <table>
+    <thead><tr><th>Tiêu chí</th><th>Codespace (máy ảo)</th><th>Container notes2</th></tr></thead>
+    <tbody>
+      <tr><td>Thời gian khởi động</td><td>~1–2 phút (từ bài 1)</td><td><mark>[ĐIỀN: dòng real của time docker run --rm notes-api:1.0 node -e &quot;1&quot;]</mark></td></tr>
+      <tr><td>Kích thước</td><td>15 GB-tháng hạn mức đĩa</td><td><mark>[ĐIỀN: cột SIZE của docker images notes-api]</mark></td></tr>
+      <tr><td>Nhân hệ điều hành</td><td>Riêng (<mark>[ĐIỀN: uname -r ngoài container]</mark>)</td><td>Dùng chung với máy chủ (<mark>[ĐIỀN: docker exec notes1 uname -r]</mark>, trùng với bên ngoài)</td></tr>
+      <tr><td>Mức cô lập</td><td>Cô lập ở mức phần cứng ảo hóa nhờ hypervisor; mỗi máy ảo có nhân và hệ điều hành riêng.</td><td>Cô lập ở mức tiến trình bằng namespaces (tách hệ thống tệp, mạng, PID) và cgroups (giới hạn CPU/RAM); chung nhân với máy chủ nên cô lập yếu hơn.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5. Bảng 2 – Mô phỏng CloudSim Plus (BasicFirstExample)</h2>
+  <p>Cấu hình gốc: HOSTS=1, HOST_PES=8, VMS=2, VM_PES=4, CLOUDLETS=4, CLOUDLET_PES=2, CLOUDLET_LENGTH=10000. Mỗi lần chỉ đổi một yếu tố.</p>
+  <table>
+    <thead><tr><th>Lần</th><th>Thay đổi</th><th>Thời điểm hoàn thành cloudlet cuối (giây mô phỏng)</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>Giữ nguyên</td><td><mark>[ĐIỀN: số]</mark></td></tr>
+      <tr><td>1</td><td>Nhân đôi VMS (2 → 4)</td><td><mark>[ĐIỀN: số]</mark></td></tr>
+      <tr><td>2</td><td>Nhân đôi CLOUDLETS (4 → 8)</td><td><mark>[ĐIỀN: số]</mark></td></tr>
+      <tr><td>3</td><td>Đổi bộ lập lịch cloudlet sang <code>CloudletSchedulerSpaceShared</code></td><td><mark>[ĐIỀN: số]</mark></td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>Giải thích kết quả</strong>
+    <ul>
+      <li><strong>Lần 1:</strong> mỗi VM cần 4 lõi, máy chủ chỉ có 8 lõi nên chỉ đặt được 2 VM; log báo VM không tạo được. <mark>[ĐIỀN: dán dòng log cảnh báo và nêu cloudlet chạy trên VM nào]</mark></li>
+      <li><strong>Lần 2:</strong> <mark>[ĐIỀN: giải thích vì sao thời gian tăng (8 cloudlet × 2 lõi = 16 lõi cần, VM chỉ có 8 lõi)]</mark></li>
+      <li><strong>Lần 3:</strong> <mark>[ĐIỀN: so với lần 0 và lần 2, rồi giải thích: nếu số lõi đủ cho mọi cloudlet chạy cùng lúc thì hai bộ lập lịch cho kết quả như nhau]</mark></li>
+    </ul>
+  </div>
+
+  <h2>6. Câu hỏi phản biện</h2>
+
+  <div class="question-section">
+    <h3>Câu 1: Vì sao notes2 vẫn báo memoryGB bằng RAM máy chủ dù đã giới hạn 128 MB?</h3>
+    <p><code>os.totalmem()</code> lấy số liệu từ nhân hệ điều hành (<code>/proc/meminfo</code>). Container dùng chung nhân với máy chủ nên con số là RAM của máy chủ. Giới hạn 128 MB do cgroups áp đặt ở một lớp khác, và Node.js không tự phản ánh nó vào <code>os.totalmem()</code>.</p>
+    <p><strong>Lưu ý cho ứng dụng:</strong> chương trình tự co giãn theo <code>os.totalmem()</code> hoặc <code>os.cpus().length</code> sẽ tính sai tài nguyên và có thể vượt giới hạn, khi đó container bị OOM-kill. Với Node.js nên đặt <code>--max-old-space-size</code> theo giới hạn container hoặc đọc <code>process.constrainedMemory()</code> / <code>/sys/fs/cgroup/memory.max</code>. Java bản mới nhận biết cgroups khi chọn kích thước heap, nhưng vẫn nên đặt <code>-XX:MaxRAMPercentage</code> rõ ràng.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 2: Time-shared và space-shared khác nhau ra sao? Gói giá rẻ nên chọn chính sách nào?</h3>
+    <p><strong>Time-shared:</strong> nhiều cloudlet dùng chung một lõi theo lát thời gian, tất cả bắt đầu sớm nhưng mỗi cái chạy chậm hơn. <strong>Space-shared:</strong> mỗi lõi phục vụ một cloudlet cho đến khi xong, cloudlet còn lại chờ trong hàng đợi.</p>
+    <p>Trong kết quả lần 3 của mình: <mark>[ĐIỀN: nêu số liệu và quan sát thật]</mark></p>
+    <p><strong>Gói giá rẻ</strong> thường chọn time-shared (kết hợp overcommit): nhiều khách thuê chia nhau cùng lõi vật lý, nhà cung cấp tận dụng phần cứng tối đa nên giảm giá được, khách chấp nhận hiệu năng thay đổi. Space-shared đảm bảo tài nguyên riêng nên hợp với gói đắt, cần hiệu năng ổn định.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 3: Mô phỏng giúp ích gì trước khi thuê hạ tầng thật, và có thể sai lệch ở đâu?</h3>
+    <p><strong>Lợi ích:</strong> thử nhiều cấu hình (số máy chủ, số VM, chính sách lập lịch) mà không tốn tiền, lặp lại được, và phát hiện sớm tình huống như VM không đặt được (lần 1).</p>
+    <p><strong>Sai lệch so với thực tế:</strong> mô hình đơn giản hóa tải (độ dài cloudlet cố định, MIPS cố định), bỏ qua độ trễ mạng, tranh chấp I/O và cache, sự cố phần cứng, và nhiễu từ các khách thuê khác trên cùng máy chủ.</p>
+  </div>
+
+  <h2>7. Điểm kiểm tra</h2>
+  <div class="card">
+    <ul>
+      <li>☐ <code>docker stats</code> hiển thị giới hạn 128 MiB cho notes2</li>
+      <li>☐ Image công khai kéo về được từ GHCR</li>
+      <li>☐ Bảng mô phỏng có đủ 4 lần chạy</li>
+    </ul>
   </div>
 
   <footer>
