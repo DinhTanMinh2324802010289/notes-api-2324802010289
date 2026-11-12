@@ -201,7 +201,18 @@
     <p><strong>Package:</strong> <a href="https://github.com/users/DinhTanMinh2324802010289/packages/container/package/notes-api">ghcr.io/dinhtanminh2324802010289/notes-api</a> (công khai)</p>
     <div class="term">docker run -d -p 3000:3000 ghcr.io/dinhtanminh2324802010289/notes-api:1.0</div>
     <p>Kết quả kéo về từ GHCR sau khi đã xóa image cục bộ và chạy lại:</p>
-    <div class="term"><mark>[ĐIỀN: dán output docker run / pull và curl localhost:3000]</mark></div>
+    <div class="term">$ docker run -d -p 3000:3000 ghcr.io/dinhtanminh2324802010289/notes-api:1.0
+Unable to find image 'ghcr.io/dinhtanminh2324802010289/notes-api:1.0' locally
+1.0: Pulling from dinhtanminh2324802010289/notes-api
+...
+Digest: sha256:364defa4... (trùng với digest lúc push)
+Status: Downloaded newer image for ghcr.io/dinhtanminh2324802010289/notes-api:1.0
+
+$ curl localhost:3000   (mở qua cổng 3000 của Codespace)
+{"message":"Xin chào từ đám mây!","host":"a88903752738","platform":"Linux 6.8.0-1070-azure","cpus":2,"memoryGB":7.8,"uptimeSec":2210,"time":"2026-11-12T07:51:20.067Z"}</div>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-04-push-ghcr.png" alt="Hình 1. docker tag và docker push lên GHCR (digest sha256:364defa4…)"><figcaption style="font-size:.85rem;color:#666">Hình 1. docker tag và docker push lên GHCR (digest sha256:364defa4…)</figcaption></figure>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-05-pull-run.png" alt="Hình 2. Xóa container và image cục bộ, kéo lại từ GHCR và chạy (digest trùng lúc push)"><figcaption style="font-size:.85rem;color:#666">Hình 2. Xóa container và image cục bộ, kéo lại từ GHCR và chạy (digest trùng lúc push)</figcaption></figure>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-06-browser.png" alt="Hình 3. API từ image kéo về, mở qua cổng 3000 của Codespace (host a88903752738)"><figcaption style="font-size:.85rem;color:#666">Hình 3. API từ image kéo về, mở qua cổng 3000 của Codespace (host a88903752738)</figcaption></figure>
   </div>
 
   <h2>2. Dockerfile</h2>
@@ -225,11 +236,15 @@ CMD ["node", "src/server.js"]</div>
 docker run -d --name notes1 -p 3000:3000 notes-api:1.0
 docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0</div>
     <strong>curl localhost:3000 (notes1, không giới hạn)</strong>
-    <div class="term"><mark>[ĐIỀN: dán JSON]</mark></div>
+    <div class="term">{"message":"Xin chào từ đám mây!","host":"29961c79f6ac","platform":"Linux 6.8.0-1070-azure","cpus":2,"memoryGB":7.8,"uptimeSec":1912,"time":"2026-11-12T07:46:21.521Z"}</div>
     <strong>curl localhost:3001 (notes2, 0.5 CPU, 128 MB)</strong>
-    <div class="term"><mark>[ĐIỀN: dán JSON]</mark></div>
+    <div class="term">{"message":"Xin chào từ đám mây!","host":"9a0d3a3afa04","platform":"Linux 6.8.0-1070-azure","cpus":2,"memoryGB":7.8,"uptimeSec":1917,"time":"2026-11-12T07:46:26.907Z"}</div>
     <strong>docker stats --no-stream</strong>
-    <div class="term"><mark>[ĐIỀN: dán bảng docker stats; cột MEM USAGE / LIMIT của notes2 phải là 128MiB]</mark></div>
+    <div class="term">CONTAINER ID   NAME     CPU %   MEM USAGE / LIMIT     MEM %    NET I/O        BLOCK I/O     PIDS
+9a0d3a3afa04   notes2   0.01%   12.88MiB / 128MiB     10.06%   1.26kB / 891B  0B / 0B       7
+29961c79f6ac   notes1   0.00%   59.61MiB / 7.756GiB   0.75%    1.61kB / 891B  61.3MB / 0B   7</div>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-01-docker-images.png" alt="Hình 4. docker images notes-api (DISK USAGE 251MB, CONTENT SIZE 63.3MB)"><figcaption style="font-size:.85rem;color:#666">Hình 4. docker images notes-api (DISK USAGE 251MB, CONTENT SIZE 63.3MB)</figcaption></figure>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-02-curl-stats.png" alt="Hình 5. curl hai bản sao và docker stats --no-stream (notes2: LIMIT 128MiB)"><figcaption style="font-size:.85rem;color:#666">Hình 5. curl hai bản sao và docker stats --no-stream (notes2: LIMIT 128MiB)</figcaption></figure>
     <p><strong>Nhận xét:</strong> trường <code>host</code> của hai bản sao khác nhau (là ID container), còn <code>cpus</code> và <code>memoryGB</code> giống nhau và bằng của máy Codespace. <code>os.cpus()</code> và <code>os.totalmem()</code> đọc thông tin từ nhân hệ điều hành dùng chung, trong khi <code>--cpus</code>/<code>--memory</code> do cgroups áp đặt và chỉ hiện ở cột MEM USAGE / LIMIT của <code>docker stats</code>.</p>
   </div>
 
@@ -237,45 +252,58 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
   <table>
     <thead><tr><th>Tiêu chí</th><th>Codespace (máy ảo)</th><th>Container notes2</th></tr></thead>
     <tbody>
-      <tr><td>Thời gian khởi động</td><td>~1–2 phút (từ bài 1)</td><td><mark>[ĐIỀN: dòng real của time docker run --rm notes-api:1.0 node -e &quot;1&quot;]</mark></td></tr>
-      <tr><td>Kích thước</td><td>15 GB-tháng hạn mức đĩa</td><td><mark>[ĐIỀN: cột SIZE của docker images notes-api]</mark></td></tr>
-      <tr><td>Nhân hệ điều hành</td><td>Riêng (<mark>[ĐIỀN: uname -r ngoài container]</mark>)</td><td>Dùng chung với máy chủ (<mark>[ĐIỀN: docker exec notes1 uname -r]</mark>, trùng với bên ngoài)</td></tr>
+      <tr><td>Thời gian khởi động</td><td>~1–2 phút (từ bài 1)</td><td>0,409 giây (<code>real 0m0.409s</code>)</td></tr>
+      <tr><td>Kích thước</td><td>15 GB-tháng hạn mức đĩa</td><td>251MB (cột DISK USAGE của <code>docker images</code>; nội dung nén 63,3 MB)</td></tr>
+      <tr><td>Nhân hệ điều hành</td><td>Riêng (<code>6.8.0-1070-azure</code>)</td><td>Dùng chung với máy chủ (<code>6.8.0-1070-azure</code>, trùng với bên ngoài)</td></tr>
       <tr><td>Mức cô lập</td><td>Cô lập ở mức phần cứng ảo hóa nhờ hypervisor; mỗi máy ảo có nhân và hệ điều hành riêng.</td><td>Cô lập ở mức tiến trình bằng namespaces (tách hệ thống tệp, mạng, PID) và cgroups (giới hạn CPU/RAM); chung nhân với máy chủ nên cô lập yếu hơn.</td></tr>
     </tbody>
   </table>
 
+<div class="card">
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-03-time-kernel.png" alt="Hình 6. time docker run --rm (real 0m0.409s), docker images và hai lệnh uname -r cho cùng kết quả 6.8.0-1070-azure"><figcaption style="font-size:.85rem;color:#666">Hình 6. time docker run --rm (real 0m0.409s), docker images và hai lệnh uname -r cho cùng kết quả 6.8.0-1070-azure</figcaption></figure>
+  </div>
+
   <h2>5. Bảng 2 – Mô phỏng CloudSim Plus (BasicFirstExample)</h2>
-  <p>Cấu hình gốc: HOSTS=1, HOST_PES=8, VMS=2, VM_PES=4, CLOUDLETS=4, CLOUDLET_PES=2, CLOUDLET_LENGTH=10000. Mỗi lần chỉ đổi một yếu tố.</p>
+  <p>Cấu hình gốc: HOSTS=1, HOST_PES=8, VMS=2, VM_PES=4, CLOUDLETS=4, CLOUDLET_PES=2, CLOUDLET_LENGTH=10000. Mỗi lần chỉ đổi một yếu tố. Ở lần 0, cloudlet dài 10 000 MI chạy trên lõi 1000 MIPS với mức sử dụng 50% (<code>UtilizationModelDynamic(0.5)</code>) nên cần 10 000 / 500 = 20 giây, đúng với 20,1 s (0,1 s đầu là thời điểm bắt đầu).</p>
   <table>
     <thead><tr><th>Lần</th><th>Thay đổi</th><th>Thời điểm hoàn thành cloudlet cuối (giây mô phỏng)</th></tr></thead>
     <tbody>
-      <tr><td>0</td><td>Giữ nguyên</td><td><mark>[ĐIỀN: số]</mark></td></tr>
-      <tr><td>1</td><td>Nhân đôi VMS (2 → 4)</td><td><mark>[ĐIỀN: số]</mark></td></tr>
-      <tr><td>2</td><td>Nhân đôi CLOUDLETS (4 → 8)</td><td><mark>[ĐIỀN: số]</mark></td></tr>
-      <tr><td>3</td><td>Đổi bộ lập lịch cloudlet sang <code>CloudletSchedulerSpaceShared</code></td><td><mark>[ĐIỀN: số]</mark></td></tr>
+      <tr><td>0</td><td>Giữ nguyên</td><td>20,1 s</td></tr>
+      <tr><td>1</td><td>Nhân đôi VMS (2 → 4)</td><td>45,6 s <em>(bắt đầu lúc 25,6 s, chạy 20,0 s)</em></td></tr>
+      <tr><td>2</td><td>Nhân đôi CLOUDLETS (4 → 8)</td><td>40,1 s <em>(bắt đầu lúc 0,1 s, chạy 40,0 s)</em></td></tr>
+      <tr><td>3</td><td>Đổi bộ lập lịch cloudlet sang <code>CloudletSchedulerSpaceShared</code></td><td>20,1 s</td></tr>
     </tbody>
   </table>
   <div class="card">
     <strong>Giải thích kết quả</strong>
     <ul>
-      <li><strong>Lần 1:</strong> mỗi VM cần 4 lõi, máy chủ chỉ có 8 lõi nên chỉ đặt được 2 VM; log báo VM không tạo được. <mark>[ĐIỀN: dán dòng log cảnh báo và nêu cloudlet chạy trên VM nào]</mark></li>
-      <li><strong>Lần 2:</strong> <mark>[ĐIỀN: giải thích vì sao thời gian tăng (8 cloudlet × 2 lõi = 16 lõi cần, VM chỉ có 8 lõi)]</mark></li>
-      <li><strong>Lần 3:</strong> <mark>[ĐIỀN: so với lần 0 và lần 2, rồi giải thích: nếu số lõi đủ cho mọi cloudlet chạy cùng lúc thì hai bộ lập lịch cho kết quả như nhau]</mark></li>
+      <li><strong>Lần 0:</strong> 4 cloudlet chạy trên 2 VM, kết thúc lúc 20,1 s (bắt đầu 0,1 s, chạy 20,0 s).</li>
+      <li><strong>Lần 1:</strong> mỗi VM cần 4 lõi, máy chủ chỉ có 8 lõi nên chỉ đặt được 2 VM; hai VM thừa không được tạo, cả 4 cloudlet vẫn chạy trên VM 0 và VM 1. Thời gian chạy của mỗi cloudlet vẫn là 20,0 s như lần 0 vì không có thêm tài nguyên nào được dùng, nhưng thời điểm bắt đầu bị lùi từ 0,1 s đến 25,6 s nên cloudlet cuối hoàn thành lúc 45,6 s. Nhiều khả năng khoảng chờ này là do bộ môi giới (broker) phải xử lý việc hai VM không đặt được rồi mới gắn cloudlet vào hai VM còn lại. Kết luận: thêm VM vượt quá số lõi vật lý không làm nhanh hơn mà còn có thể chậm hơn.</li>
+      <li><strong>Lần 2:</strong> gấp đôi số cloudlet (4 → 8) với bộ lập lịch time-shared mặc định, thời điểm hoàn thành tăng từ 20,1 s lên 40,1 s, gấp đôi lần 0. Mỗi VM có 4 lõi mà phải phục vụ 4 cloudlet × 2 lõi = 8 lõi cần dùng, nên các cloudlet chia nhau thời gian CPU, mỗi cái nhận một nửa tốc độ và chạy lâu gấp đôi (40,0 s thay vì 20,0 s).</li>
+      <li><strong>Lần 3:</strong> 20,1 s, bằng lần 0. Mỗi VM có 4 lõi và nhận 2 cloudlet × 2 lõi = 4 lõi, vừa đủ để cả hai chạy cùng lúc nên không có cloudlet nào phải xếp hàng. Khi chưa có tranh chấp CPU, time-shared và space-shared cho cùng kết quả.</li>
     </ul>
+  </div>
+
+  <div class="card">
+    <strong>Ảnh chụp kết quả các lần chạy</strong>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-07-cloudsim-lan0.png" alt="Hình 7. Lần 0 – giữ nguyên (VMS = 2, CLOUDLETS = 4): kết thúc 20,1 s"><figcaption style="font-size:.85rem;color:#666">Hình 7. Lần 0 – giữ nguyên (VMS = 2, CLOUDLETS = 4): kết thúc 20,1 s</figcaption></figure>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-08-cloudsim-lan1.png" alt="Hình 8. Lần 1 – VMS = 4: cloudlet bắt đầu 25,6 s, kết thúc 45,6 s"><figcaption style="font-size:.85rem;color:#666">Hình 8. Lần 1 – VMS = 4: cloudlet bắt đầu 25,6 s, kết thúc 45,6 s</figcaption></figure>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-09-cloudsim-lan2.png" alt="Hình 9. Lần 2 – CLOUDLETS = 8: kết thúc 40,1 s"><figcaption style="font-size:.85rem;color:#666">Hình 9. Lần 2 – CLOUDLETS = 8: kết thúc 40,1 s</figcaption></figure>
+    <figure style="margin:10px 0"><img class="shot" src="img/b2-10-cloudsim-lan3.png" alt="Hình 10. Lần 3 – CloudletSchedulerSpaceShared: kết thúc 20,1 s"><figcaption style="font-size:.85rem;color:#666">Hình 10. Lần 3 – CloudletSchedulerSpaceShared: kết thúc 20,1 s</figcaption></figure>
   </div>
 
   <h2>6. Câu hỏi phản biện</h2>
 
   <div class="question-section">
     <h3>Câu 1: Vì sao notes2 vẫn báo memoryGB bằng RAM máy chủ dù đã giới hạn 128 MB?</h3>
-    <p><code>os.totalmem()</code> lấy số liệu từ nhân hệ điều hành (<code>/proc/meminfo</code>). Container dùng chung nhân với máy chủ nên con số là RAM của máy chủ. Giới hạn 128 MB do cgroups áp đặt ở một lớp khác, và Node.js không tự phản ánh nó vào <code>os.totalmem()</code>.</p>
+    <p><code>os.totalmem()</code> lấy số liệu từ nhân hệ điều hành (<code>/proc/meminfo</code>). Container dùng chung nhân với máy chủ nên con số là RAM của máy chủ. Giới hạn 128 MB do cgroups áp đặt ở một lớp khác, và Node.js không tự phản ánh nó vào <code>os.totalmem()</code>. Trong thí nghiệm, cả hai container đều báo <code>memoryGB: 7.8</code>, trong khi <code>docker stats</code> cho notes2 giới hạn <code>128MiB</code> còn notes1 là <code>7.756GiB</code>.</p>
     <p><strong>Lưu ý cho ứng dụng:</strong> chương trình tự co giãn theo <code>os.totalmem()</code> hoặc <code>os.cpus().length</code> sẽ tính sai tài nguyên và có thể vượt giới hạn, khi đó container bị OOM-kill. Với Node.js nên đặt <code>--max-old-space-size</code> theo giới hạn container hoặc đọc <code>process.constrainedMemory()</code> / <code>/sys/fs/cgroup/memory.max</code>. Java bản mới nhận biết cgroups khi chọn kích thước heap, nhưng vẫn nên đặt <code>-XX:MaxRAMPercentage</code> rõ ràng.</p>
   </div>
 
   <div class="question-section">
     <h3>Câu 2: Time-shared và space-shared khác nhau ra sao? Gói giá rẻ nên chọn chính sách nào?</h3>
     <p><strong>Time-shared:</strong> nhiều cloudlet dùng chung một lõi theo lát thời gian, tất cả bắt đầu sớm nhưng mỗi cái chạy chậm hơn. <strong>Space-shared:</strong> mỗi lõi phục vụ một cloudlet cho đến khi xong, cloudlet còn lại chờ trong hàng đợi.</p>
-    <p>Trong kết quả lần 3 của mình: <mark>[ĐIỀN: nêu số liệu và quan sát thật]</mark></p>
+    <p>Trong kết quả lần 3 của mình: cả lần 0 và lần 3 đều hoàn thành lúc 20,1 s, vì mỗi VM chỉ có 2 cloudlet × 2 lõi = 4 lõi nên không phải xếp hàng. Sự khác biệt giữa hai chính sách chỉ lộ ra khi số lõi cloudlet cần vượt quá số lõi của VM.</p>
     <p><strong>Gói giá rẻ</strong> thường chọn time-shared (kết hợp overcommit): nhiều khách thuê chia nhau cùng lõi vật lý, nhà cung cấp tận dụng phần cứng tối đa nên giảm giá được, khách chấp nhận hiệu năng thay đổi. Space-shared đảm bảo tài nguyên riêng nên hợp với gói đắt, cần hiệu năng ổn định.</p>
   </div>
 
@@ -288,9 +316,9 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
   <h2>7. Điểm kiểm tra</h2>
   <div class="card">
     <ul>
-      <li>☐ <code>docker stats</code> hiển thị giới hạn 128 MiB cho notes2</li>
-      <li>☐ Image công khai kéo về được từ GHCR</li>
-      <li>☐ Bảng mô phỏng có đủ 4 lần chạy</li>
+      <li>☑ <code>docker stats</code> hiển thị giới hạn 128 MiB cho notes2</li>
+      <li>☑ Image công khai kéo về được từ GHCR</li>
+      <li>☑ Bảng mô phỏng có đủ 4 lần chạy</li>
     </ul>
   </div>
 
