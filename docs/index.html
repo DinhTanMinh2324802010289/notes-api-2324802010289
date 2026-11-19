@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài 1 & Bài 2 – Điện Toán Đám Mây | Đinh Tấn Minh – 2324802010289</title>
+  <title>Bài 1, 2 &amp; 3 – Điện Toán Đám Mây | Đinh Tấn Minh – 2324802010289</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -96,6 +96,104 @@
 </head>
 <body>
 
+  <nav class="toc"><a href="#bai1">Bài 1 – Hello Cloud API</a><a href="#bai2">Bài 2 – Container &amp; CloudSim Plus</a><a href="#bai3">Bài 3 – NoSQL &amp; lưu trữ đối tượng</a></nav>
+
+  <!-- ===================== BÀI 1 ===================== -->
+  <h1 id="bai1">Bài 1 – Hello Cloud API</h1>
+  <p class="subtitle">Đinh Tấn Minh – MSSV: 2324802010289 | Điện Toán Đám Mây</p>
+
+  <h2>Bảng so sánh Máy cá nhân vs. Codespace</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tiêu chí</th>
+        <th>Máy cá nhân</th>
+        <th>Codespace</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Thời gian từ lúc bắt đầu đến khi chạy được <code>node -v</code></td>
+        <td>~15–30 phút (tải &amp; cài Node.js, cấu hình môi trường)</td>
+        <td>~1–2 phút (đã cài sẵn)</td>
+      </tr>
+      <tr>
+        <td>Số CPU, RAM (từ API)</td>
+        <td>12 CPU (Intel i5-10500H), 16 GB RAM</td>
+        <td>2 vCPU, 7.8 GB RAM</td>
+      </tr>
+      <tr>
+        <td>Hệ điều hành</td>
+        <td>Windows 11 Home Single Language 64-bit (Build 26300)</td>
+        <td>Linux 6.5.0-1025-azure (Ubuntu 22.04)</td>
+      </tr>
+      <tr>
+        <td>Cách truy cập từ thiết bị khác</td>
+        <td>Cấu hình mạng, mở port, dùng IP LAN/ngrok</td>
+        <td>Đổi Port Visibility → Public, truy cập qua URL .app.github.dev</td>
+      </tr>
+      <tr>
+        <td>Chi phí, đo bằng gì</td>
+        <td>Tiền điện, khấu hao phần cứng (khó đo)</td>
+        <td>Miễn phí 120 core-giờ/tháng (gói Free); đo qua Settings → Billing → Usage</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5 đặc tính NIST qua trải nghiệm thực tế</h2>
+
+  <div class="nist-card">
+    <strong>1. Tự phục vụ theo yêu cầu (On-demand self-service)</strong>
+    <p>Sinh viên tự tạo Codespace chỉ bằng vài cú nhấp chuột trên GitHub, không cần liên hệ quản trị viên hay chờ phê duyệt. Máy ảo được cấp phát tự động trong vòng 1–2 phút.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>2. Truy cập mạng rộng (Broad network access)</strong>
+    <p>API chạy trên Codespace có thể truy cập từ điện thoại, máy tính bảng hay bất kỳ thiết bị nào có trình duyệt thông qua URL công khai <code>*.app.github.dev</code>.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>3. Gộp tài nguyên (Resource pooling)</strong>
+    <p>Mỗi lần tạo Codespace, máy ảo được cấp từ một kho tài nguyên chung của GitHub/Azure. Hostname thay đổi khi Stop rồi Start lại, cho thấy máy ảo được phân phối lại từ pool.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>4. Co giãn nhanh (Rapid elasticity)</strong>
+    <p>Có thể chọn cấu hình máy (2-core, 4-core, 8-core…) khi tạo Codespace. Tài nguyên được cấp/thu hồi linh hoạt theo nhu cầu mà không ảnh hưởng người dùng khác.</p>
+  </div>
+
+  <div class="nist-card">
+    <strong>5. Dịch vụ đo lường được (Measured service)</strong>
+    <p>GitHub đo mức sử dụng bằng core-giờ (core-hours). Sinh viên theo dõi được lượng tài nguyên đã dùng qua Settings → Billing → Usage, minh bạch và rõ ràng.</p>
+  </div>
+
+  <h2>Câu hỏi phản biện</h2>
+
+  <div class="question-section">
+    <h3>Câu 1: Trường <code>host</code> có đổi không khi Stop rồi Start lại?</h3>
+    <p>Có, trường <code>host</code> (hostname) thường thay đổi sau khi Stop và Start lại Codespace. Điều này cho thấy máy ảo không phải lúc nào cũng chạy trên cùng một máy chủ vật lý — nó được cấp phát lại từ một <strong>kho tài nguyên chung</strong> (resource pool), đúng với đặc tính thứ 3 của NIST.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 2: Codespaces là IaaS, PaaS hay SaaS?</h3>
+    <p><strong>Codespaces là PaaS</strong> (Platform as a Service). Lý do:</p>
+    <ul style="margin-left: 20px; margin-top: 8px;">
+      <li><strong>Hệ điều hành</strong>: GitHub quản lý (Ubuntu Linux, người dùng không cài/cấu hình OS).</li>
+      <li><strong>Runtime</strong>: GitHub cài sẵn Node.js, Python, Java… trong container dev.</li>
+      <li><strong>Mã nguồn</strong>: Sinh viên tự viết và quản lý.</li>
+    </ul>
+    <p style="margin-top: 8px;">→ Người dùng chỉ quản lý ứng dụng và dữ liệu, phần còn lại do nhà cung cấp lo ⇒ PaaS.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 3: Hai hạn chế của cách làm truyền thống và một rủi ro mới</h3>
+    <p><strong>Hạn chế 1:</strong> Cài đặt môi trường trên từng máy phòng lab tốn nhiều thời gian và dễ gặp lỗi không đồng nhất (khác phiên bản Node.js, thiếu thư viện…).</p>
+    <p><strong>Hạn chế 2:</strong> Sinh viên bị gắn với máy cụ thể trong phòng lab, không thể làm việc từ xa hay trên thiết bị cá nhân.</p>
+    <p><strong>Rủi ro mới:</strong> Phụ thuộc hoàn toàn vào kết nối Internet và nhà cung cấp dịch vụ đám mây. Nếu GitHub gặp sự cố hoặc mất mạng, sinh viên không thể tiếp tục làm việc.</p>
+  </div>
+
+
+  <!-- ===================== BÀI 2 ===================== -->
   <hr style="margin:48px 0 8px; border:none; border-top:3px solid #1a73e8;">
   <h1 id="bai2" style="margin-top:24px;">Bài 2 – Ảo hóa, Container &amp; Mô phỏng Trung tâm Dữ liệu</h1>
   <p class="subtitle">Chương 2: mục 2.2 Công nghệ ảo hóa, 2.5 Công cụ mô phỏng đám mây</p>
@@ -211,6 +309,69 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
     </ul>
   </div>
 
+
+  <!-- ===================== BÀI 3 ===================== -->
+  <hr style="margin:48px 0 8px; border:none; border-top:3px solid #1a73e8;">
+  <h1 id="bai3" style="margin-top:24px;">Bài 3 – Lưu trữ phân tán: NoSQL và lưu trữ đối tượng</h1>
+  <p class="subtitle">Chương 3: mục 3.1 Lưu trữ phân tán, 3.3 NoSQL, 3.4 Đám mây và dữ liệu lớn</p>
+
+  <h2>1. Kiến trúc và dịch vụ</h2>
+  <div class="card">
+    <ul>
+      <li><strong>MongoDB Atlas:</strong> cluster Free (AWS, Singapore), Replica Set 3 nút (1 primary, 2 secondary); user <code>notes_app</code> chỉ có quyền <code>readWrite</code> trên database <code>notes</code>.</li>
+      <li><strong>Supabase Storage:</strong> bucket công khai <code>attachments</code> lưu nội dung tệp; MongoDB chỉ lưu URL tham chiếu (<code>attachmentUrl</code>).</li>
+      <li><strong>API Express:</strong> <code>POST/GET/PUT/DELETE /notes</code>, <code>GET /notes?tag=...</code>, <code>POST /notes/:id/attachment</code> (tệp tối đa 2 MB). Mã trả về: 201, 200, 204, 404, 400.</li>
+      <li>Khóa bí mật nằm trong <code>.env</code>, được Git bỏ qua (<code>git check-ignore .env</code> in ra <code>.env</code>).</li>
+    </ul>
+  </div>
+
+  <h2>2. Kết quả đo chỉ mục (<code>node scripts/explain.js</code>)</h2>
+  <p>Truy vấn: tìm ghi chú có tag <code>docker</code> trong bộ sưu tập gồm 2000 ghi chú mẫu cộng 1 ghi chú thử.</p>
+  <table>
+    <thead><tr><th>Cách truy vấn</th><th>docsExamined</th><th>returned</th><th>ms</th></tr></thead>
+    <tbody>
+      <tr><td>Quét toàn bộ (<code>$natural</code>)</td><td>2001</td><td>571</td><td>1</td></tr>
+      <tr><td>Dùng chỉ mục (<code>tags</code>)</td><td>571</td><td>571</td><td>1</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <p><strong>Mức giảm quét = 2001 ÷ 571 ≈ 3,5 lần.</strong> Hai cách trả cùng 571 kết quả, nhưng chỉ mục giúp MongoDB chỉ kiểm tra 571 tài liệu thay vì toàn bộ. Thời gian đều là 1 ms vì dữ liệu nhỏ, nên kết luận dựa vào <code>docsExamined</code> chứ không dựa vào cột <code>ms</code>.</p>
+  </div>
+
+  <h2>3. Câu hỏi phản biện</h2>
+
+  <div class="question-section">
+    <h3>Câu 1: Với 2 triệu tài liệu và gói miễn phí giới hạn 100 thao tác/giây thì điều gì xảy ra?</h3>
+    <p>Nếu phân bố tag giữ nguyên, quét toàn bộ phải kiểm tra khoảng 2.000.000 tài liệu cho mỗi truy vấn, còn dùng chỉ mục kiểm tra khoảng 2.000.000 ÷ 3,5 ≈ 570.000 tài liệu. Chỉ mục giảm công việc mỗi truy vấn nên cùng tài nguyên xử lý được nhiều truy vấn hơn.</p>
+    <p>Tuy vậy mức giảm chỉ khoảng 3,5 lần vì tag <code>docker</code> khớp khoảng 28% tài liệu (571/2001). Truy vấn vẫn nặng ở quy mô 2 triệu, và việc trả về hàng trăm nghìn kết quả cũng tốn thời gian. Chỉ mục hiệu quả nhất khi điều kiện lọc chọn lọc hơn (kết hợp nhiều trường, dùng <code>limit</code>). Giới hạn 100 thao tác/giây là số yêu cầu, không phải số tài liệu quét, nên không thể lấy số tài liệu chia 100 để suy ra thời gian truy vấn. Ở quy mô này, quét toàn bộ dễ làm mỗi truy vấn kéo dài và nhanh chóng chạm giới hạn tài nguyên của gói miễn phí; mức tăng tốc thực tế cần đo lại trên dữ liệu thật.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 2: Vì sao lưu tệp trên Supabase Storage rồi chỉ lưu URL trong MongoDB, thay vì lưu thẳng nội dung tệp vào tài liệu MongoDB?</h3>
+    <p>Supabase Storage là kho lưu trữ đối tượng, được thiết kế để lưu và phân phối tệp; MongoDB phù hợp với dữ liệu có cấu trúc và truy vấn. Chỉ lưu URL giúp tài liệu ghi chú nhỏ gọn, mỗi lần đọc hay ghi ghi chú không phải kéo theo nội dung tệp lớn. Cách này cũng tránh giới hạn 16 MB của một tài liệu MongoDB, cho phép tải tệp trực tiếp qua URL mà không qua cơ sở dữ liệu, và giúp mở rộng hay thay đổi từng phần một cách độc lập.</p>
+  </div>
+
+  <div class="question-section">
+    <h3>Câu 3: Atlas nhân bản 3 nút, HDFS mặc định nhân bản 3 khối. Mục tiêu chung của con số 3 là gì, và hai hệ thống khác nhau ở đơn vị nhân bản ra sao?</h3>
+    <p><strong>Mục tiêu chung:</strong> chịu lỗi và tăng tính sẵn sàng. Dữ liệu có nhiều bản sao nên khi một nút hỏng, hệ thống vẫn hoạt động và không mất dữ liệu.</p>
+    <p><strong>Khác nhau ở đơn vị nhân bản:</strong></p>
+    <ul>
+      <li><strong>Atlas (MongoDB):</strong> nhân bản dữ liệu giữa các thành viên của replica set (1 primary, 2 secondary). Primary nhận ghi và sao chép thay đổi sang các secondary.</li>
+      <li><strong>HDFS:</strong> nhân bản từng khối (block) của tệp, mặc định 3 bản, đặt trên các DataNode khác nhau. NameNode chỉ quản lý metadata, không lưu nội dung khối.</li>
+    </ul>
+    <p>Primary của MongoDB không tương đương NameNode của HDFS.</p>
+  </div>
+
+  <h2>4. Điểm kiểm tra</h2>
+  <div class="card">
+    <ul>
+      <li>☑ Đủ 5 thao tác CRUD, trả mã 201/204/404/400 đúng tình huống</li>
+      <li>☑ Tệp đính kèm mở được qua <code>attachmentUrl</code></li>
+      <li>☑ Bảng <code>console.table</code> có số liệu của cả hai cách truy vấn</li>
+      <li>☑ <code>git status</code> không thấy tệp <code>.env</code></li>
+    </ul>
+  </div>
+
   <footer>
     <p>Điện Toán Đám Mây – TDMU</p>
     <p>Đinh Tấn Minh</p>
@@ -222,4 +383,3 @@ docker run -d --name notes2 -p 3001:3000 --cpus=0.5 --memory=128m notes-api:1.0<
 
 </body>
 </html>
-
